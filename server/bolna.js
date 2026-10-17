@@ -1,9 +1,10 @@
+const BOLNA_API = "https://api.bolna.ai";
 const RECIPIENT_PHONE_NUMBER = "+918920710046";
 const GOLD_AGENT_ID = "23128ef4-1c4d-4922-9802-7045ddf2ef9b";
 const REFERRAL_AGENT_ID = "b70f6c27-7281-427e-864f-99e9c41ee97e";
 
 async function bolna(path, key, options = {}) {
-  const response = await fetch(`https://api.bolna.ai${path}`, {
+  const response = await fetch(`${BOLNA_API}${path}`, {
     ...options,
     headers: {
       Authorization: `Bearer ${key}`,
