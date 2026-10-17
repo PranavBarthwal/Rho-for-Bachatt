@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import qrcode from "../vendor/qrcode.js";
 import { REFERRAL_CODE, copyText, inviteLink, openWhatsApp, shareInvite } from "../lib/share.js";
+import { placeReferralCall } from "../lib/call.js";
 import { useAppState } from "../state.jsx";
 
 function Chevron() {
@@ -72,6 +73,20 @@ export default function ReferPage({ rewards = false }) {
   const [params] = useSearchParams();
   const join = Boolean(params.get("ref")) && !rewards;
   const { showToast } = useAppState();
+  const referralCallTimer = useRef(null);
+
+  function onInviteWhatsApp() {
+    openWhatsApp();
+    window.clearTimeout(referralCallTimer.current);
+    referralCallTimer.current = window.setTimeout(async () => {
+      try {
+        const result = await placeReferralCall();
+        showToast(result.status === "queued" ? "Call queued" : "Call placed");
+      } catch (error) {
+        showToast(error.message || "Could not place the call");
+      }
+    }, 5000);
+  }
   const [more, setMore] = useState(false);
   const [qrOpen, setQrOpen] = useState(false);
   const [termsOpen, setTermsOpen] = useState(false);
@@ -222,7 +237,7 @@ export default function ReferPage({ rewards = false }) {
 
       {!join && (
         <div className="cta-bar">
-          <button className="whatsapp" type="button" onClick={openWhatsApp}>
+          <button className="whatsapp" type="button" onClick={onInviteWhatsApp}>
             Invite over WhatsApp
             <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M12 2.2A9.7 9.7 0 0 0 3.6 16.7L2.4 21.6l5-1.2A9.8 9.8 0 1 0 12 2.2zm5.5 13.6c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .1-1.7-.1-.4-.1-.9-.3-1.5-.6-2.7-1.2-4.4-3.8-4.6-4-.1-.2-1.1-1.4-1.1-2.7s.7-1.9.9-2.2c.2-.2.6-.3.9-.3h.3c.2 0 .4 0 .5.4.2.5.7 1.8.8 1.9.1.1.1.3 0 .5-.1.2-.2.3-.3.5l-.4.4c-.1.1-.2.3-.1.5.2.3.7 1.1 1.4 1.7 1 .9 1.8 1.1 2 .1.2-.2.6-.7.8-1 .2-.2.3-.2.6-.1.2.1 1.4.7 1.6.8.2.1.4.2.4.3.1.2.1.6-.1 1.2z" /></svg>
           </button>

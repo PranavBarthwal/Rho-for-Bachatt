@@ -8,9 +8,10 @@ function bolnaCallApi() {
     const env = loadEnv(mode, process.cwd(), "");
     server.middlewares.use(async (req, res, next) => {
       const path = req.url?.split("?")[0];
-      if (path !== "/api/call" || req.method !== "POST") return next();
+      const profile = path === "/api/call" ? "gold" : path === "/api/referral-call" ? "referral" : null;
+      if (!profile || req.method !== "POST") return next();
       try {
-        const result = await placeBolnaCall(env);
+        const result = await placeBolnaCall(env, profile);
         res.statusCode = 200;
         res.setHeader("Content-Type", "application/json");
         res.end(JSON.stringify({
