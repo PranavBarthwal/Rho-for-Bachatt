@@ -1,6 +1,6 @@
 const RECIPIENT_PHONE_NUMBER = "+918920710046";
-
-let cachedAgentId;
+const GOLD_AGENT_ID = "23128ef4-1c4d-4922-9802-7045ddf2ef9b";
+const REFERRAL_AGENT_ID = "b70f6c27-7281-427e-864f-99e9c41ee97e";
 
 async function bolna(path, key, options = {}) {
   const response = await fetch(`https://api.bolna.ai${path}`, {
@@ -20,29 +20,17 @@ async function bolna(path, key, options = {}) {
   return data;
 }
 
-async function resolveAgentId(key, preferred) {
-  if (preferred) return preferred;
-  if (cachedAgentId) return cachedAgentId;
-  const agents = await bolna("/v2/agent/all", key);
-  const list = Array.isArray(agents) ? agents : [];
-  const agent = list.find((item) => item.agent_status === "processed") || list[0];
-  if (!agent?.id) {
-    const error = new Error("No Bolna agent is available for this account");
-    error.status = 400;
-    throw error;
-  }
-  cachedAgentId = agent.id;
-  return agent.id;
-}
-
-export async function placeBolnaCall(env) {
-  const key = env.BOLNA_API_KEY;
+export async function placeBolnaCall(env, profile = "gold") {
+  const referral = profile === "referral";
+  const key = referral ? env.BOLNA_REFERRAL_API_KEY : env.BOLNA_API_KEY;
+  const agentId = referral
+    ? (env.BOLNA_REFERRAL_AGENT_ID || REFERRAL_AGENT_ID)
+    : (env.BOLNA_AGENT_ID || GOLD_AGENT_ID);
   if (!key) {
     const error = new Error("Bolna API key is not configured");
     error.status = 500;
     throw error;
   }
-  const agentId = await resolveAgentId(key, env.BOLNA_AGENT_ID);
   return bolna("/call", key, {
     method: "POST",
     body: JSON.stringify({

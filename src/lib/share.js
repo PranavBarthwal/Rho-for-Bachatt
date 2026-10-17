@@ -1,13 +1,14 @@
 export const REFERRAL_CODE = "B308753825D";
 
+export const WHATSAPP_RECIPIENT = "918920710046";
+export const INVITE_URL = `http://bachatt.app/refer?ref=${REFERRAL_CODE}`;
+
 export function inviteLink() {
-  const url = new URL("/refer", window.location.origin);
-  url.searchParams.set("ref", REFERRAL_CODE);
-  return url.toString();
+  return INVITE_URL;
 }
 
 export function inviteMessage() {
-  return `Dosto ko bulao! Join me on Bachatt and start saving. Use my referral code ${REFERRAL_CODE} when you set up your account.\n${inviteLink()}`;
+  return `Hi Pranav, Bachatt join karo aur saving start karo! :)\nAccount setup karte time mera referral code **${REFERRAL_CODE}** use karna. Join here: ${INVITE_URL}`;
 }
 
 export async function copyText(text) {
@@ -29,7 +30,7 @@ export async function copyText(text) {
 }
 
 export function openWhatsApp() {
-  const url = `https://wa.me/?text=${encodeURIComponent(inviteMessage())}`;
+  const url = `https://wa.me/${WHATSAPP_RECIPIENT}?text=${encodeURIComponent(inviteMessage())}`;
   window.open(url, "_blank", "noopener,noreferrer");
 }
 
