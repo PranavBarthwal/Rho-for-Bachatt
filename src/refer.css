@@ -3,28 +3,28 @@
   font-style: normal;
   font-weight: 500;
   font-display: swap;
-  src: url("./fonts/jakarta-500.ttf") format("truetype");
+  src: url("/fonts/jakarta-500.ttf") format("truetype");
 }
 @font-face {
   font-family: "Plus Jakarta Sans";
   font-style: normal;
   font-weight: 600;
   font-display: swap;
-  src: url("./fonts/jakarta-600.ttf") format("truetype");
+  src: url("/fonts/jakarta-600.ttf") format("truetype");
 }
 @font-face {
   font-family: "Plus Jakarta Sans";
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url("./fonts/jakarta-700.ttf") format("truetype");
+  src: url("/fonts/jakarta-700.ttf") format("truetype");
 }
 @font-face {
   font-family: "Plus Jakarta Sans";
   font-style: normal;
   font-weight: 800;
   font-display: swap;
-  src: url("./fonts/jakarta-800.ttf") format("truetype");
+  src: url("/fonts/jakarta-800.ttf") format("truetype");
 }
 
 :root {
@@ -77,7 +77,7 @@ summary:focus-visible {
 }
 img { display: block; max-width: 100%; }
 
-.app {
+.refer-page {
   width: min(var(--shell), 100%);
   min-height: 100dvh;
   margin: 0 auto;
@@ -85,7 +85,7 @@ img { display: block; max-width: 100%; }
   isolation: isolate;
   background: transparent;
 }
-.app::before {
+.refer-page::before {
   content: "";
   position: fixed;
   top: 0;
@@ -656,13 +656,13 @@ dialog::backdrop {
 
 @media (min-width: 760px) {
   body { padding: 18px 0; }
-  .app {
+  .refer-page {
     min-height: calc(100dvh - 36px);
     border-radius: 28px;
     overflow: clip;
     box-shadow: 0 18px 50px rgba(50, 30, 90, 0.16);
   }
-  .app::before { border-radius: 28px; }
+  .refer-page::before { border-radius: 28px; }
   .topbar { border-radius: 28px 28px 0 0; }
 }
 
