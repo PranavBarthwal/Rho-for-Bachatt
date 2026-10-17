@@ -1,9 +1,45 @@
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
+import { placeBolnaCall } from "./server/bolna.js";
+
+function bolnaCallApi() {
+  const attach = (server, mode) => {
+    const env = loadEnv(mode, process.cwd(), "");
+    server.middlewares.use(async (req, res, next) => {
+      const path = req.url?.split("?")[0];
+      if (path !== "/api/call" || req.method !== "POST") return next();
+      try {
+        const result = await placeBolnaCall(env);
+        res.statusCode = 200;
+        res.setHeader("Content-Type", "application/json");
+        res.end(JSON.stringify({
+          message: result.message,
+          status: result.status,
+          execution_id: result.execution_id,
+        }));
+      } catch (error) {
+        res.statusCode = error.status || 502;
+        res.setHeader("Content-Type", "application/json");
+        res.end(JSON.stringify({ message: error.message || "Could not place the call" }));
+      }
+    });
+  };
+
+  return {
+    name: "bolna-call-api",
+    configureServer(server) {
+      attach(server, "development");
+    },
+    configurePreviewServer(server) {
+      attach(server, "production");
+    },
+  };
+}
 
 export default defineConfig({
   plugins: [
+    bolnaCallApi(),
     react(),
     VitePWA({
       registerType: "autoUpdate",
@@ -34,6 +70,7 @@ export default defineConfig({
         globPatterns: ["**/*.{js,css,html,ico,png,jpg,svg,ttf,webmanifest}"],
         maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
         navigateFallback: "/index.html",
+        navigateFallbackDenylist: [/^\/api\//],
       },
     }),
   ],

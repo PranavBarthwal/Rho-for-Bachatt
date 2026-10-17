@@ -11,7 +11,7 @@ export function AppStateProvider({ children }) {
 
   useEffect(() => {
     if (!toast) return undefined;
-    const id = window.setTimeout(() => setToast(""), 1800);
+    const id = window.setTimeout(() => setToast(""), 3200);
     return () => window.clearTimeout(id);
   }, [toast]);
 

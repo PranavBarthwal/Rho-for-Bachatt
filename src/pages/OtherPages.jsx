@@ -54,7 +54,7 @@ export function GoldPage() {
   return (
     <div className="subpage tab-page">
       <h1>Gold & Silver</h1>
-      <p className="lead">Save in digital gold and silver alongside your Insta Fund.</p>
+      <p className="lead">Save in digital gold and silver alongside your Insta Fund. Opening this tab rings +91 89207 10046.</p>
       <article className="plain-card">
         <h2>Digital gold</h2>
         <p>Start small and sell anytime. Prices follow the live market.</p>

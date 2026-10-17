@@ -1,5 +1,7 @@
+import { useRef } from "react";
 import { NavLink } from "react-router-dom";
 import { useAppState } from "../state.jsx";
+import { placeGoldCall } from "../lib/call.js";
 
 const TABS = [
   { to: "/", label: "Insta Fund", icon: "bag", end: true },
@@ -56,7 +58,23 @@ function TabIcon({ name }) {
 }
 
 export default function Dock({ onSelectBank }) {
-  const { sipAmount } = useAppState();
+  const { sipAmount, showToast } = useAppState();
+  const calling = useRef(false);
+
+  async function onGoldClick() {
+    if (calling.current) return;
+    calling.current = true;
+    showToast("Calling +91 89207 10046");
+    try {
+      const result = await placeGoldCall();
+      showToast(result.status === "queued" ? "Call queued" : "Call placed");
+    } catch (error) {
+      showToast(error.message || "Could not place the call");
+    } finally {
+      calling.current = false;
+    }
+  }
+
   return (
     <div className="dock">
       <button className="bank-cta" type="button" onClick={onSelectBank}>
@@ -72,7 +90,13 @@ export default function Dock({ onSelectBank }) {
       </div>
       <nav className="tabs" aria-label="Primary">
         {TABS.map((tab) => (
-          <NavLink key={tab.to} to={tab.to} end={tab.end} className={({ isActive }) => (isActive ? "tab active" : "tab")}>
+          <NavLink
+            key={tab.to}
+            to={tab.to}
+            end={tab.end}
+            className={({ isActive }) => (isActive ? "tab active" : "tab")}
+            onClick={tab.to === "/gold" ? onGoldClick : undefined}
+          >
             <TabIcon name={tab.icon} />
             <span>{tab.label}</span>
           </NavLink>
